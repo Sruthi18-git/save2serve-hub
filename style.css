@@ -22,3 +22,13 @@ h1{
     padding: 14px 20px;
     text-decoration: none;
 }
+
+body a:hover{
+    background-color: #ddd;
+    color: black;
+}
+
+.content{
+    margin: 20px;
+    font-size: 18px;
+}
