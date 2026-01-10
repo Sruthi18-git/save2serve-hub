@@ -28,3 +28,7 @@ h1{
     color: #333;
     text-align: center;
 }
+
+.info a:hover{
+    background-color: #575757;
+}
