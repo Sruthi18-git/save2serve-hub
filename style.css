@@ -22,3 +22,9 @@ h1{
     padding: 14px 20px;
     text-decoration: none;
 }
+
+.para{
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+}
