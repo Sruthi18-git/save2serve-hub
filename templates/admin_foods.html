@@ -1,0 +1,416 @@
+<!-- [file name]: admin_foods.html -->
+<!-- [file location]: templates/admin_foods.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Management - Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn.active {
+            background: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .available {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .collected {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .delivered {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #27ae60;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 5px solid #3498db;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .status-filter {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .status-filter.active {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .stats-summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .stat-item h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 1.8rem;
+        }
+        
+        .stat-item p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Delivery success rate */
+        .success-rate {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .success-rate h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .rate-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🍽️ Food Management</h1>
+            <p>Monitor all food donations in the system</p>
+            
+            <div class="nav-buttons">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Dashboard</a>
+                <a href="{{ url_for('admin.view_hotels') }}" class="btn">🏨 Hotels</a>
+                <a href="{{ url_for('admin.view_ngos') }}" class="btn">🤝 NGOs</a>
+            </div>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if 'success' in message %}alert-success{% elif 'error' in message %}alert-error{% else %}alert-info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Status Filter -->
+        <div style="margin-bottom: 20px;">
+            <strong>Filter by Status:</strong>
+            <div style="margin-top: 10px;">
+                <a href="{{ url_for('admin.view_foods') }}" class="status-filter {% if not status_filter %}active{% endif %}">All ({{ status_counts.get('Available', 0) + status_counts.get('Collected', 0) + status_counts.get('Delivered', 0) }})</a>
+                <a href="{{ url_for('admin.view_foods', status='Available') }}" class="status-filter {% if status_filter == 'Available' %}active{% endif %}">Available ({{ status_counts.get('Available', 0) }})</a>
+                <a href="{{ url_for('admin.view_foods', status='Collected') }}" class="status-filter {% if status_filter == 'Collected' %}active{% endif %}">Collected ({{ status_counts.get('Collected', 0) }})</a>
+                <a href="{{ url_for('admin.view_foods', status='Delivered') }}" class="status-filter {% if status_filter == 'Delivered' %}active{% endif %}">Delivered ({{ status_counts.get('Delivered', 0) }})</a>
+            </div>
+        </div>
+        
+        <!-- Stats Summary -->
+        <div class="stats-summary">
+            <div class="stat-item">
+                <h3>{{ total_foods }}</h3>
+                <p>Total Foods</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ status_counts.get('Available', 0) }}</h3>
+                <p>Available</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ status_counts.get('Collected', 0) }}</h3>
+                <p>Collected</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ status_counts.get('Delivered', 0) }}</h3>
+                <p>Delivered</p>
+            </div>
+        </div>
+        
+        <!-- Delivery Success Rate -->
+        <div class="success-rate">
+            <h3>🎯 Delivery Success Rate</h3>
+            <div class="rate-number">
+                {% if stats.total_foods > 0 %}
+                    {{ ((stats.delivered_foods / stats.total_foods) * 100)|round(1) }}%
+                {% else %}
+                    0%
+                {% endif %}
+            </div>
+            <p>{{ stats.delivered_foods }} of {{ stats.total_foods }} foods successfully delivered</p>
+        </div>
+        
+        <!-- Food Table -->
+        <h3>Food Donations List {% if status_filter %}({{ status_filter }}){% endif %}</h3>
+        
+        {% if foods and foods|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Food Name</th>
+                    <th>Quantity</th>
+                    <th>Hotel</th>
+                    <th>Status</th>
+                    <th>Expiry Time</th>
+                    <th>Location</th>
+                    <th>Uploaded</th>
+                    <th>Collected By</th>
+                    <th>Collected Time</th>
+                    <th>Delivered Time</th>
+                    <th>Time Left</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in foods %}
+                <tr>
+                    <td><strong>{{ food.food_name }}</strong></td>
+                    <td>{{ food.quantity }}</td>
+                    <td>{{ food.hotel_name }}</td>
+                    <td>
+                        <span class="status-badge 
+                            {% if food.status == 'Available' %}available
+                            {% elif food.status == 'Collected' %}collected
+                            {% elif food.status == 'Delivered' %}delivered
+                            {% endif %}">
+                            {{ food.status }}
+                        </span>
+                    </td>
+                    <td>{{ food.expiry_time }}</td>
+                    <td>{{ food.location }}</td>
+                    <td>{{ food.uploaded_time[:19] if food.uploaded_time else 'N/A' }}</td>
+                    <td>
+                        {% if food.status == 'Collected' and food.collected_by %}
+                            {% set ngo = db.execute_query("SELECT name FROM ngo WHERE id = ?", (food.collected_by,)) %}
+                            {{ ngo[0]['name'] if ngo else 'NGO ' + food.collected_by|string }}
+                        {% elif food.status == 'Delivered' and food.collected_by %}
+                            {% set ngo = db.execute_query("SELECT name FROM ngo WHERE id = ?", (food.collected_by,)) %}
+                            {{ ngo[0]['name'] if ngo else 'NGO ' + food.collected_by|string }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ food.collected_time[:19] if food.collected_time else '-' }}</td>
+                    <td>{{ food.delivered_time[:19] if food.delivered_time else '-' }}</td>
+                    <td>
+                        {% if food.status == 'Available' %}
+                            {% if food.is_expired %}
+                                <span style="color: #e74c3c; font-weight: bold;">EXPIRED</span>
+                            {% elif food.is_urgent %}
+                                <span style="color: #e67e22; font-weight: bold;">
+                                    {{ food.minutes_left|int }} min
+                                </span>
+                            {% elif food.minutes_left %}
+                                <span style="color: #27ae60;">
+                                    {{ (food.minutes_left/60)|int }}h {{ (food.minutes_left%60)|int }}m
+                                </span>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        {% else %}
+                            <span style="color: #95a5a6;">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <p style="margin-top: 20px; color: #666;">
+            Showing {{ foods|length }} food item(s)
+            {% if status_filter %}with status "{{ status_filter }}"{% endif %}
+        </p>
+        
+        {% else %}
+        <div class="empty-state">
+            <h3>🍽️ No Food Donations Found</h3>
+            <p>No food donations have been uploaded yet by hotels.</p>
+            <p>Hotels can upload food from their dashboard.</p>
+        </div>
+        {% endif %}
+        
+        <!-- Delivery Success Alert -->
+        {% if stats.delivered_foods > 0 %}
+        <div class="alert-success" style="margin-top: 20px;">
+            ✅ {{ stats.delivered_foods }} food item(s) successfully delivered to those in need!
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // Simple page refresh for Available foods
+        if (window.location.search.includes('status=Available') || !window.location.search.includes('status=')) {
+            setTimeout(function() {
+                location.reload();
+            }, 30000); // 30 seconds
+        }
+        
+        // Add click event to show more details
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('click', function() {
+                    const foodName = this.cells[0].textContent;
+                    const status = this.cells[3].querySelector('.status-badge').textContent;
+                    const hotel = this.cells[2].textContent;
+                    const collectedBy = this.cells[7].textContent;
+                    const collectedTime = this.cells[8].textContent;
+                    const deliveredTime = this.cells[9].textContent;
+                    
+                    let message = `Food: ${foodName}\n`;
+                    message += `Hotel: ${hotel}\n`;
+                    message += `Status: ${status}\n`;
+                    
+                    if (collectedBy !== '-') {
+                        message += `Collected by: ${collectedBy}\n`;
+                        message += `Collected: ${collectedTime}\n`;
+                    }
+                    
+                    if (deliveredTime !== '-') {
+                        message += `Delivered: ${deliveredTime}\n`;
+                    }
+                    
+                    alert(message);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

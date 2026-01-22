@@ -1,0 +1,470 @@
+<!-- [file name]: admin_users.html -->
+<!-- [file location]: templates/admin_users.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Users - Admin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #333, #555);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+        
+        .nav-links {
+            margin-top: 15px;
+        }
+        
+        .nav-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            margin: 0 10px 10px 0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.active {
+            background: rgba(255,255,255,0.4);
+            font-weight: bold;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 5px solid;
+        }
+        
+        .stat-card.hotels { border-color: #3498db; }
+        .stat-card.ngos { border-color: #2ecc71; }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-active { background: #d4edda; color: #155724; }
+        .badge-inactive { background: #f8d7da; color: #721c24; }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-view { background: #3498db; color: white; }
+        .btn-edit { background: #f39c12; color: white; }
+        .btn-delete { background: #e74c3c; color: white; }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 5px solid;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #27ae60;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #e74c3c;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .user-type-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #7f8c8d;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab.active {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>👥 All System Users</h1>
+            <p>Manage hotels and NGOs registered in SAVE2SERVE HUB</p>
+            <div class="nav-links">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-btn">← Dashboard</a>
+                <a href="{{ url_for('admin.view_hotels') }}" class="nav-btn">🏨 Hotels</a>
+                <a href="{{ url_for('admin.view_ngos') }}" class="nav-btn">🤝 NGOs</a>
+                <a href="{{ url_for('admin.view_foods') }}" class="nav-btn">🍽️ Foods</a>
+                <a href="{{ url_for('admin.settings') }}" class="nav-btn">⚙️ Settings</a>
+                <a href="{{ url_for('logout') }}" class="nav-btn">🚪 Logout</a>
+            </div>
+        </div>
+        
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if 'success' in message|lower %}alert-success{% elif 'error' in message|lower %}alert-error{% else %}alert-info{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card hotels">
+                <div class="stat-number">{{ hotels|length if hotels else 0 }}</div>
+                <div class="stat-label">🏨 Total Hotels</div>
+            </div>
+            <div class="stat-card ngos">
+                <div class="stat-number">{{ ngos|length if ngos else 0 }}</div>
+                <div class="stat-label">🤝 Total NGOs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ (hotels|length if hotels else 0) + (ngos|length if ngos else 0) }}</div>
+                <div class="stat-label">👥 Total Users</div>
+            </div>
+        </div>
+        
+        <!-- User Type Tabs -->
+        <div class="user-type-tabs">
+            <button class="tab active" onclick="showTab('hotels')">🏨 Hotels ({{ hotels|length if hotels else 0 }})</button>
+            <button class="tab" onclick="showTab('ngos')">🤝 NGOs ({{ ngos|length if ngos else 0 }})</button>
+        </div>
+        
+        <!-- Hotels Tab Content -->
+        <div id="hotels-tab" class="tab-content active">
+            <div class="section">
+                <h2>
+                    🏨 Registered Hotels
+                    <span style="font-size: 0.9rem; color: #666;">
+                        Total: {{ hotels|length if hotels else 0 }}
+                    </span>
+                </h2>
+                
+                {% if hotels and hotels|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Hotel Name</th>
+                            <th>Email</th>
+                            <th>Location</th>
+                            <th>Contact</th>
+                            <th>Registered</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hotel in hotels %}
+                        <tr>
+                            <td>{{ hotel.id }}</td>
+                            <td>
+                                <strong>{{ hotel.name }}</strong>
+                                {% if hotel.is_premium %}
+                                <span class="badge" style="background: #f39c12; color: white; margin-left: 5px;">Premium</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ hotel.email }}</td>
+                            <td>{{ hotel.location if hotel.location else 'Not specified' }}</td>
+                            <td>{{ hotel.contact if hotel.contact else 'N/A' }}</td>
+                            <td>{{ hotel.registration_date[:10] if hotel.registration_date else 'N/A' }}</td>
+                            <td>
+                                <span class="badge badge-active">
+                                    Active
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('admin.view_hotel', hotel_id=hotel.id) }}" 
+                                       class="action-btn btn-view" title="View Details">
+                                        👁️
+                                    </a>
+                                    <form method="POST" action="{{ url_for('admin.delete_user', user_type='hotel', user_id=hotel.id) }}" 
+                                          style="display: inline;"
+                                          onsubmit="return confirm('Delete hotel {{ hotel.name }}? This action cannot be undone!');">
+                                        <button type="submit" class="action-btn btn-delete" title="Delete Hotel">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <p style="margin-top: 15px; color: #666; text-align: center;">
+                    Showing {{ hotels|length }} hotel(s)
+                </p>
+                
+                {% else %}
+                <div class="empty-state">
+                    <h3>🏨 No Hotels Registered</h3>
+                    <p>No hotels have registered in the system yet.</p>
+                    <p>Hotels can register from the home page.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- NGOs Tab Content -->
+        <div id="ngos-tab" class="tab-content">
+            <div class="section">
+                <h2>
+                    🤝 Registered NGOs
+                    <span style="font-size: 0.9rem; color: #666;">
+                        Total: {{ ngos|length if ngos else 0 }}
+                    </span>
+                </h2>
+                
+                {% if ngos and ngos|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NGO Name</th>
+                            <th>Email</th>
+                            <th>Location</th>
+                            <th>Contact</th>
+                            <th>Type</th>
+                            <th>Registered</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ngo in ngos %}
+                        <tr>
+                            <td>{{ ngo.id }}</td>
+                            <td><strong>{{ ngo.name }}</strong></td>
+                            <td>{{ ngo.email }}</td>
+                            <td>{{ ngo.location if ngo.location else 'Not specified' }}</td>
+                            <td>{{ ngo.contact if ngo.contact else 'N/A' }}</td>
+                            <td>{{ ngo.ngo_type if ngo.ngo_type else 'General' }}</td>
+                            <td>{{ ngo.registration_date[:10] if ngo.registration_date else 'N/A' }}</td>
+                            <td>
+                                <span class="badge badge-active">
+                                    Active
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('admin.view_ngo', ngo_id=ngo.id) }}" 
+                                       class="action-btn btn-view" title="View Details">
+                                        👁️
+                                    </a>
+                                    <form method="POST" action="{{ url_for('admin.delete_user', user_type='ngo', user_id=ngo.id) }}" 
+                                          style="display: inline;"
+                                          onsubmit="return confirm('Delete NGO {{ ngo.name }}? This action cannot be undone!');">
+                                        <button type="submit" class="action-btn btn-delete" title="Delete NGO">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <p style="margin-top: 15px; color: #666; text-align: center;">
+                    Showing {{ ngos|length }} NGO(s)
+                </p>
+                
+                {% else %}
+                <div class="empty-state">
+                    <h3>🤝 No NGOs Registered</h3>
+                    <p>No NGOs have registered in the system yet.</p>
+                    <p>NGOs can register from the home page.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; color: #7f8c8d; font-size: 0.9rem;">
+            <p>SAVE2SERVE HUB User Management • Last updated: {{ now.strftime('%Y-%m-%d %H:%M:%S') if now else 'N/A' }}</p>
+            <p><a href="{{ url_for('admin.debug_db') }}" style="color: #3498db;">Database Debug</a></p>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Find and activate the clicked tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.includes(tabName === 'hotels' ? 'Hotels' : 'NGOs')) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+        
+        // Auto-refresh every 60 seconds
+        setTimeout(function() {
+            location.reload();
+        }, 60000);
+        
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // You can add search functionality here if needed
+            console.log('Admin Users page loaded');
+        });
+    </script>
+</body>
+</html>

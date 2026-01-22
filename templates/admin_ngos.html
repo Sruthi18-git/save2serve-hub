@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View NGOs - Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .header h2 {
+            margin: 0 0 10px 0;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h2>🤝 All NGOs</h2>
+            <div class="nav-buttons">
+                <!-- FIXED ROUTE: Use admin.dashboard instead of admin_dashboard -->
+                <a href="{{ url_for('admin.dashboard') }}" class="btn">← Dashboard</a>
+                <a href="{{ url_for('admin.view_foods') }}" class="btn">Foods</a>
+                <a href="{{ url_for('admin.view_hotels') }}" class="btn">Hotels</a>
+            </div>
+        </div>
+        
+        <!-- NGOs Table -->
+        <h3>Total NGOs: {{ ngos|length if ngos else 0 }}</h3>
+        
+        {% if ngos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>NGO Name</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th>Contact</th>
+                    <th>Foods Collected</th>
+                    <th>Foods Delivered</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ngo in ngos %}
+                <tr>
+                    <td><strong>{{ ngo.name }}</strong></td>
+                    <td>{{ ngo.email }}</td>
+                    <td>{{ ngo.location }}</td>
+                    <td>{{ ngo.contact }}</td>
+                    <td>{{ ngo.collected_foods if ngo.collected_foods else 0 }}</td>
+                    <td>{{ ngo.delivered_foods if ngo.delivered_foods else 0 }}</td>
+                    <td>{{ ngo.registration_date[:19] if ngo.registration_date else 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <p style="margin-top: 20px; color: #666;">
+            Showing {{ ngos|length }} NGO(s)
+        </p>
+        
+        {% else %}
+        <div class="empty-state">
+            <h3>🤝 No NGOs Registered</h3>
+            <p>No NGOs have registered in the system yet.</p>
+            <p>NGOs can register from the home page.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // Auto-refresh every minute
+        setTimeout(function() {
+            location.reload();
+        }, 60000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVE2SERVE HUB - Food Exchange System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .header {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .nav {
+            background: #333;
+            padding: 15px;
+            text-align: center;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+            margin: 0 10px;
+            display: inline-block;
+        }
+        .nav a:hover {
+            background: #575757;
+        }
+        .hero {
+            padding: 100px 20px;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            color: white;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 20px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .features {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        .feature-box {
+            display: inline-block;
+            width: 30%;
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SAVE2SERVE HUB</h1>
+        <p>Food Exchange System - Connecting Hotels with NGOs</p>
+    </div>
+    
+    <div class="nav">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('hotel_login') }}">Hotel Login</a>
+        <a href="{{ url_for('ngo_login') }}">NGO Login</a>
+        <a href="{{ url_for('admin_login') }}">Admin Login</a>
+        <a href="{{ url_for('hotel_register') }}">Hotel Register</a>
+        <a href="{{ url_for('ngo_register') }}">NGO Register</a>
+    </div>
+    
+    <div class="hero">
+        <h2>Reduce Food Waste, Feed the Needy</h2>
+        <p>Connecting Hotels/Restaurants with NGOs through a centralized platform</p>
+        <a href="{{ url_for('hotel_register') }}" class="btn">🏨 Register as Hotel</a>
+        <a href="{{ url_for('ngo_register') }}" class="btn">🤝 Register as NGO</a>
+    </div>
+    
+    <div class="features">
+        <h2>How It Works</h2>
+        <div class="feature-box">
+            <h3>🏨 Hotels Upload</h3>
+            <p>Hotels upload surplus food details including quantity and expiry time</p>
+        </div>
+        <div class="feature-box">
+            <h3>📱 NGOs View</h3>
+            <p>NGOs view available food in real-time with location maps</p>
+        </div>
+        <div class="feature-box">
+            <h3>🚚 Food Collection</h3>
+            <p>NGOs collect and deliver food to those in need</p>
+        </div>
+    </div>
+   
+    <footer>
+        <p>SAVE2SERVE HUB - Final Year BCA Project</p>
+        <p>Food Exchange System | Python Flask | SQLite Database</p>
+        <p>© 2024 All Rights Reserved</p>
+    </footer>
+</body>
+</html>

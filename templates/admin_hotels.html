@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Hotels - Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .header h2 {
+            margin: 0 0 10px 0;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h2>🏨 All Hotels</h2>
+            <div class="nav-buttons">
+                <!-- FIXED ROUTE: Use admin.dashboard instead of admin_dashboard -->
+                <a href="{{ url_for('admin.dashboard') }}" class="btn">← Dashboard</a>
+                <a href="{{ url_for('admin.view_foods') }}" class="btn">Foods</a>
+                <a href="{{ url_for('admin.view_ngos') }}" class="btn">NGOs</a>
+            </div>
+        </div>
+        
+        <!-- Hotels Table -->
+        <h3>Total Hotels: {{ hotels|length if hotels else 0 }}</h3>
+        
+        {% if hotels %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Hotel Name</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th>Contact</th>
+                    <th>Food Uploads</th>
+                    <th>Delivered</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hotel in hotels %}
+                <tr>
+                    <td><strong>{{ hotel.name }}</strong></td>
+                    <td>{{ hotel.email }}</td>
+                    <td>{{ hotel.location }}</td>
+                    <td>{{ hotel.contact }}</td>
+                    <td>{{ hotel.total_foods if hotel.total_foods else 0 }}</td>
+                    <td>{{ hotel.delivered_foods if hotel.delivered_foods else 0 }}</td>
+                    <td>{{ hotel.registration_date[:19] if hotel.registration_date else 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <p style="margin-top: 20px; color: #666;">
+            Showing {{ hotels|length }} hotel(s)
+        </p>
+        
+        {% else %}
+        <div class="empty-state">
+            <h3>🏨 No Hotels Registered</h3>
+            <p>No hotels have registered in the system yet.</p>
+            <p>Hotels can register from the home page.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // Auto-refresh every minute
+        setTimeout(function() {
+            location.reload();
+        }, 60000);
+    </script>
+</body>
+</html>

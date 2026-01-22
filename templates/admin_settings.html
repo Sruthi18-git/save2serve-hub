@@ -1,0 +1,1076 @@
+<!-- [file name]: admin_settings.html -->
+<!-- [file location]: templates/admin_settings.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - Admin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #333, #555);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+        
+        .nav-links {
+            margin-top: 15px;
+        }
+        
+        .nav-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            margin: 0 10px 10px 0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .settings-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+        }
+        
+        .settings-card.system { border-left-color: #3498db; }
+        .settings-card.security { border-left-color: #2ecc71; }
+        .settings-card.email { border-left-color: #f39c12; }
+        .settings-card.database { border-left-color: #9b59b6; }
+        .settings-card.notifications { border-left-color: #e74c3c; }
+        .settings-card.backup { border-left-color: #1abc9c; }
+        
+        .settings-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .settings-card h3 i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: #3498db;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 5px solid;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #27ae60;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #e74c3c;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-color: #3498db;
+        }
+        
+        .system-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid #eee;
+        }
+        
+        .system-info h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .info-label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .danger-zone {
+            background: #f8d7da;
+            border: 1px solid #e74c3c;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .danger-zone h3 {
+            color: #721c24;
+            margin-top: 0;
+        }
+        
+        .danger-zone .btn {
+            background: #e74c3c;
+        }
+        
+        .danger-zone .btn:hover {
+            background: #c0392b;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #2ecc71;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .tab-container {
+            margin-bottom: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #7f8c8d;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab.active {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚙️ System Settings</h1>
+            <p>Configure and manage SAVE2SERVE HUB system settings</p>
+            <div class="nav-links">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-btn">← Dashboard</a>
+                <a href="{{ url_for('admin.view_users') }}" class="nav-btn">👥 Users</a>
+                <a href="{{ url_for('admin.view_foods') }}" class="nav-btn">🍽️ Foods</a>
+                <a href="{{ url_for('admin.settings') }}" class="nav-btn active">⚙️ Settings</a>
+                <a href="{{ url_for('logout') }}" class="nav-btn">🚪 Logout</a>
+            </div>
+        </div>
+        
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if 'success' in message|lower %}alert-success{% elif 'error' in message|lower %}alert-error{% else %}alert-info{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- Settings Tabs -->
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('general')">General Settings</button>
+                <button class="tab" onclick="showTab('email')">Email & Notifications</button>
+                <button class="tab" onclick="showTab('security')">Security</button>
+                <button class="tab" onclick="showTab('database')">Database</button>
+                <button class="tab" onclick="showTab('backup')">Backup</button>
+            </div>
+            
+            <!-- General Settings Tab -->
+            <div id="general-tab" class="tab-content active">
+                <div class="settings-grid">
+                    <!-- System Settings -->
+                    <div class="settings-card system">
+                        <h3><i class="fas fa-cog"></i> System Configuration</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <label for="system_name">System Name</label>
+                                <input type="text" class="form-control" id="system_name" 
+                                       value="SAVE2SERVE HUB" placeholder="Enter system name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="admin_email">Admin Email</label>
+                                <input type="email" class="form-control" id="admin_email" 
+                                       value="admin@save2serve.com" placeholder="Admin contact email">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="timezone">Timezone</label>
+                                <select class="form-control" id="timezone">
+                                    <option value="UTC">UTC</option>
+                                    <option value="IST" selected>India Standard Time (IST)</option>
+                                    <option value="EST">Eastern Standard Time (EST)</option>
+                                    <option value="PST">Pacific Standard Time (PST)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="maintenance_mode" checked>
+                                    <label for="maintenance_mode">Enable Maintenance Mode</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="registration_open" checked>
+                                    <label for="registration_open">Allow New Registrations</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="debug_mode">
+                                    <label for="debug_mode">Enable Debug Mode</label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save System Settings
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Notification Settings -->
+                    <div class="settings-card notifications">
+                        <h3><i class="fas fa-bell"></i> Notification Settings</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="email_notifications" checked>
+                                    <label for="email_notifications">Enable Email Notifications</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="food_expiry_alerts" checked>
+                                    <label for="food_expiry_alerts">Food Expiry Alerts</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="new_registration_alerts" checked>
+                                    <label for="new_registration_alerts">New Registration Alerts</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="daily_reports">
+                                    <label for="daily_reports">Daily Summary Reports</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="alert_threshold">Expiry Alert Threshold (minutes)</label>
+                                <input type="number" class="form-control" id="alert_threshold" 
+                                       value="60" min="15" max="1440">
+                                <small style="color: #7f8c8d;">Send alerts when food has less than this many minutes until expiry</small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Notification Settings
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email & Notifications Tab -->
+            <div id="email-tab" class="tab-content">
+                <div class="settings-grid">
+                    <!-- Email Configuration -->
+                    <div class="settings-card email">
+                        <h3><i class="fas fa-envelope"></i> Email Server Configuration</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <label for="smtp_server">SMTP Server</label>
+                                <input type="text" class="form-control" id="smtp_server" 
+                                       value="smtp.gmail.com" placeholder="SMTP server address">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="smtp_port">SMTP Port</label>
+                                <input type="number" class="form-control" id="smtp_port" 
+                                       value="587" placeholder="SMTP port">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="smtp_username">SMTP Username</label>
+                                <input type="text" class="form-control" id="smtp_username" 
+                                       placeholder="Email username">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="smtp_password">SMTP Password</label>
+                                <input type="password" class="form-control" id="smtp_password" 
+                                       placeholder="Email password">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sender_email">Sender Email Address</label>
+                                <input type="email" class="form-control" id="sender_email" 
+                                       value="noreply@save2serve.com" placeholder="Sender email">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email_encryption">Email Encryption</label>
+                                <select class="form-control" id="email_encryption">
+                                    <option value="tls" selected>TLS</option>
+                                    <option value="ssl">SSL</option>
+                                    <option value="none">None</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane"></i> Test Email Configuration
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Email Settings
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Email Templates -->
+                    <div class="settings-card">
+                        <h3><i class="fas fa-file-alt"></i> Email Templates</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <label for="welcome_subject">Welcome Email Subject</label>
+                                <input type="text" class="form-control" id="welcome_subject" 
+                                       value="Welcome to SAVE2SERVE HUB!">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="food_collected_subject">Food Collected Subject</label>
+                                <input type="text" class="form-control" id="food_collected_subject" 
+                                       value="Your food has been collected!">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="expiry_alert_subject">Expiry Alert Subject</label>
+                                <input type="text" class="form-control" id="expiry_alert_subject" 
+                                       value="Food Expiry Alert - Immediate Action Required">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email_footer">Email Footer</label>
+                                <textarea class="form-control" id="email_footer" rows="3">Thank you for using SAVE2SERVE HUB - Reducing food waste, feeding the needy.</textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Email Templates
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Tab -->
+            <div id="security-tab" class="tab-content">
+                <div class="settings-grid">
+                    <!-- Security Settings -->
+                    <div class="settings-card security">
+                        <h3><i class="fas fa-shield-alt"></i> Security Settings</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <label for="session_timeout">Session Timeout (minutes)</label>
+                                <input type="number" class="form-control" id="session_timeout" 
+                                       value="120" min="15" max="1440">
+                                <small style="color: #7f8c8d;">User session timeout in minutes</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="max_login_attempts">Max Login Attempts</label>
+                                <input type="number" class="form-control" id="max_login_attempts" 
+                                       value="5" min="1" max="10">
+                                <small style="color: #7f8c8d;">Maximum failed login attempts before lockout</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="password_min_length">Minimum Password Length</label>
+                                <input type="number" class="form-control" id="password_min_length" 
+                                       value="8" min="6" max="32">
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="require_strong_password" checked>
+                                    <label for="require_strong_password">Require Strong Passwords</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="password_expiry">
+                                    <label for="password_expiry">Enable Password Expiry (90 days)</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="two_factor_auth">
+                                    <label for="two_factor_auth">Enable Two-Factor Authentication (Admin only)</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="ip_whitelisting">
+                                    <label for="ip_whitelisting">Enable IP Whitelisting</label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Security Settings
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Audit Log -->
+                    <div class="settings-card">
+                        <h3><i class="fas fa-history"></i> Audit Log Settings</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="log_logins" checked>
+                                    <label for="log_logins">Log All Login Attempts</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="log_food_actions" checked>
+                                    <label for="log_food_actions">Log Food Collection/Delivery</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="log_user_actions">
+                                    <label for="log_user_actions">Log User Management Actions</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="log_admin_actions" checked>
+                                    <label for="log_admin_actions">Log Admin Actions</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="log_retention">Log Retention Period (days)</label>
+                                <input type="number" class="form-control" id="log_retention" 
+                                       value="90" min="7" max="365">
+                                <small style="color: #7f8c8d;">How long to keep logs before auto-deletion</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="log_level">Log Level</label>
+                                <select class="form-control" id="log_level">
+                                    <option value="info">Info (Default)</option>
+                                    <option value="debug">Debug</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="error">Error Only</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Log Settings
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Database Tab -->
+            <div id="database-tab" class="tab-content">
+                <div class="settings-grid">
+                    <!-- Database Management -->
+                    <div class="settings-card database">
+                        <h3><i class="fas fa-database"></i> Database Management</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <label for="db_type">Database Type</label>
+                                <input type="text" class="form-control" id="db_type" 
+                                       value="SQLite" readonly>
+                                <small style="color: #7f8c8d;">Currently using SQLite database</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="db_location">Database Location</label>
+                                <input type="text" class="form-control" id="db_location" 
+                                       value="food.db" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="db_size">Database Size</label>
+                                <input type="text" class="form-control" id="db_size" 
+                                       value="~2.5 MB" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="auto_vacuum">
+                                    <label for="auto_vacuum">Enable Auto-Vacuum</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="foreign_keys" checked>
+                                    <label for="foreign_keys">Enable Foreign Key Constraints</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" onclick="optimizeDatabase()">
+                                    <i class="fas fa-broom"></i> Optimize Database
+                                </button>
+                                <button type="button" class="btn btn-warning" onclick="rebuildIndexes()">
+                                    <i class="fas fa-sync-alt"></i> Rebuild Indexes
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success" onclick="exportDatabase()">
+                                    <i class="fas fa-download"></i> Export Database
+                                </button>
+                                <button type="button" class="btn btn-danger" onclick="showImportDialog()">
+                                    <i class="fas fa-upload"></i> Import Database
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Database Statistics -->
+                    <div class="settings-card">
+                        <h3><i class="fas fa-chart-bar"></i> Database Statistics</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Hotels</div>
+                                <div class="info-value" id="hotel-count">Loading...</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">NGOs</div>
+                                <div class="info-value" id="ngo-count">Loading...</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Food Items</div>
+                                <div class="info-value" id="food-count">Loading...</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Delivered</div>
+                                <div class="info-value" id="delivered-count">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <button type="button" class="btn btn-primary" onclick="updateStats()">
+                                <i class="fas fa-sync-alt"></i> Refresh Statistics
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="showQueryAnalyzer()">
+                                <i class="fas fa-search"></i> Query Analyzer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Backup Tab -->
+            <div id="backup-tab" class="tab-content">
+                <div class="settings-grid">
+                    <!-- Backup Settings -->
+                    <div class="settings-card backup">
+                        <h3><i class="fas fa-save"></i> Backup Configuration</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <label for="backup_frequency">Backup Frequency</label>
+                                <select class="form-control" id="backup_frequency">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly" selected>Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="manual">Manual Only</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="backup_location">Backup Location</label>
+                                <input type="text" class="form-control" id="backup_location" 
+                                       value="./backups/" placeholder="Backup directory">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="retention_days">Backup Retention (days)</label>
+                                <input type="number" class="form-control" id="retention_days" 
+                                       value="30" min="1" max="365">
+                                <small style="color: #7f8c8d;">How long to keep backup files</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="compress_backups" checked>
+                                    <label for="compress_backups">Compress Backups (ZIP)</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="encrypt_backups">
+                                    <label for="encrypt_backups">Encrypt Backups</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="auto_backup">
+                                    <label for="auto_backup">Enable Auto-Backup</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success" onclick="createBackup()">
+                                    <i class="fas fa-save"></i> Create Manual Backup
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save Backup Settings
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Restore Settings -->
+                    <div class="settings-card">
+                        <h3><i class="fas fa-undo"></i> Restore & Recovery</h3>
+                        <form method="POST" action="#">
+                            <div class="form-group">
+                                <label for="backup_file">Select Backup File</label>
+                                <input type="file" class="form-control" id="backup_file" 
+                                       accept=".db,.sqlite,.zip">
+                                <small style="color: #7f8c8d;">Select a backup file to restore</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="restore_mode">Restore Mode</label>
+                                <select class="form-control" id="restore_mode">
+                                    <option value="full">Full Restore (Overwrite All)</option>
+                                    <option value="partial">Partial Restore (Merge Data)</option>
+                                    <option value="tables">Restore Specific Tables</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="verify_backup" checked>
+                                    <label for="verify_backup">Verify Backup Integrity</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="create_pre_restore_backup" checked>
+                                    <label for="create_pre_restore_backup">Create Backup Before Restore</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="button" class="btn btn-warning" onclick="verifyBackup()">
+                                    <i class="fas fa-check-circle"></i> Verify Backup
+                                </button>
+                                <button type="button" class="btn btn-danger" onclick="showRestoreDialog()">
+                                    <i class="fas fa-undo"></i> Restore Database
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Backup History -->
+                <div class="settings-card" style="margin-top: 25px;">
+                    <h3><i class="fas fa-history"></i> Backup History</h3>
+                    <div id="backup-history">
+                        <p style="color: #7f8c8d; text-align: center;">No backup history available</p>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="loadBackupHistory()">
+                        <i class="fas fa-sync-alt"></i> Load Backup History
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Information -->
+        <div class="system-info">
+            <h3><i class="fas fa-info-circle"></i> System Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">System Version</div>
+                    <div class="info-value">SAVE2SERVE HUB v2.0.1</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Flask Version</div>
+                    <div class="info-value" id="flask-version">Loading...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Python Version</div>
+                    <div class="info-value" id="python-version">Loading...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Server Uptime</div>
+                    <div class="info-value" id="server-uptime">Loading...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Memory Usage</div>
+                    <div class="info-value" id="memory-usage">Loading...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Disk Space</div>
+                    <div class="info-value" id="disk-space">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+            <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+            <p style="color: #721c24; margin-bottom: 20px;">
+                <strong>Warning:</strong> These actions are irreversible. Use with extreme caution.
+            </p>
+            
+            <div class="form-group">
+                <button type="button" class="btn" onclick="clearAllData()" 
+                        style="margin-right: 10px;">
+                    <i class="fas fa-trash"></i> Clear All Data
+                </button>
+                <button type="button" class="btn" onclick="resetSystem()">
+                    <i class="fas fa-redo"></i> Reset System to Defaults
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <button type="button" class="btn" onclick="exportLogs()" 
+                        style="margin-right: 10px;">
+                    <i class="fas fa-download"></i> Export All Logs
+                </button>
+                <button type="button" class="btn" onclick="shutdownSystem()">
+                    <i class="fas fa-power-off"></i> Shutdown System
+                </button>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; color: #7f8c8d; font-size: 0.9rem;">
+            <p>SAVE2SERVE HUB System Settings • Last updated: <span id="current-time"></span></p>
+            <p>Only administrators should modify these settings.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Find and activate the clicked tab
+            event.target.classList.add('active');
+            
+            // Load dynamic content for the tab
+            if (tabName === 'database') {
+                updateStats();
+            } else if (tabName === 'backup') {
+                loadBackupHistory();
+            }
+        }
+        
+        // Update database statistics
+        function updateStats() {
+            // Simulate API call to get stats
+            setTimeout(() => {
+                document.getElementById('hotel-count').textContent = '25';
+                document.getElementById('ngo-count').textContent = '18';
+                document.getElementById('food-count').textContent = '142';
+                document.getElementById('delivered-count').textContent = '89';
+            }, 500);
+        }
+        
+        // Load backup history
+        function loadBackupHistory() {
+            const historyDiv = document.getElementById('backup-history');
+            historyDiv.innerHTML = `
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 8px; border-bottom: 1px solid #ddd;">Date</th>
+                            <th style="padding: 8px; border-bottom: 1px solid #ddd;">Size</th>
+                            <th style="padding: 8px; border-bottom: 1px solid #ddd;">Type</th>
+                            <th style="padding: 8px; border-bottom: 1px solid #ddd;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 8px;">2024-01-19 10:30</td>
+                            <td style="padding: 8px;">2.1 MB</td>
+                            <td style="padding: 8px;">Full</td>
+                            <td style="padding: 8px;"><span style="color: green;">✓ Verified</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px;">2024-01-18 22:15</td>
+                            <td style="padding: 8px;">2.0 MB</td>
+                            <td style="padding: 8px;">Full</td>
+                            <td style="padding: 8px;"><span style="color: green;">✓ Verified</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px;">2024-01-17 09:45</td>
+                            <td style="padding: 8px;">1.9 MB</td>
+                            <td style="padding: 8px;">Incremental</td>
+                            <td style="padding: 8px;"><span style="color: orange;">⚠️ Warning</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // System information
+        function updateSystemInfo() {
+            document.getElementById('flask-version').textContent = '2.3.3';
+            document.getElementById('python-version').textContent = '3.11.4';
+            document.getElementById('server-uptime').textContent = '2 days, 5 hours';
+            document.getElementById('memory-usage').textContent = '45.2 MB';
+            document.getElementById('disk-space').textContent = '15.2 GB free';
+        }
+        
+        // Update current time
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        // Danger zone actions
+        function clearAllData() {
+            if (confirm('⚠️ WARNING: This will delete ALL data (hotels, NGOs, food items). This action cannot be undone! Are you absolutely sure?')) {
+                alert('Data clearing initiated. This feature would connect to your database and truncate all tables.');
+                // In production, this would make an API call to clear data
+            }
+        }
+        
+        function resetSystem() {
+            if (confirm('⚠️ WARNING: This will reset all system settings to defaults. Current settings will be lost! Continue?')) {
+                alert('System reset initiated. This would restore default configuration.');
+            }
+        }
+        
+        function shutdownSystem() {
+            if (confirm('⚠️ WARNING: This will shutdown the SAVE2SERVE HUB system. All users will be logged out! Continue?')) {
+                alert('System shutdown initiated. This would stop the Flask server.');
+            }
+        }
+        
+        // Database operations
+        function optimizeDatabase() {
+            alert('Database optimization initiated. This would run VACUUM command on SQLite database.');
+        }
+        
+        function exportDatabase() {
+            alert('Database export initiated. This would create a backup file download.');
+        }
+        
+        function createBackup() {
+            alert('Creating manual backup... This would generate a timestamped backup file.');
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            updateSystemInfo();
+            updateCurrentTime();
+            
+            // Update time every second
+            setInterval(updateCurrentTime, 1000);
+            
+            // Auto-refresh every 2 minutes
+            setTimeout(() => {
+                location.reload();
+            }, 120000);
+        });
+        
+        // Form submission handlers
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Settings saved successfully! (This is a demo - in production, this would save to database)');
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

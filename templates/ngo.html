@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard - SAVE2SERVE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f8ff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            margin: 5px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Food Grid */
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        /* Food Card */
+        .food-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .food-card.urgent {
+            border-color: #ff4444;
+            background: #fff5f5;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
+        }
+        
+        .food-card.warning {
+            border-color: #ff9800;
+            background: #fff8e1;
+        }
+        
+        .food-card.expired {
+            border-color: #666;
+            background: #f5f5f5;
+            opacity: 0.8;
+        }
+        
+        .food-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        /* Time Badge */
+        .time-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 0.95rem;
+        }
+        
+        .time-normal { background: #e8f5e9; color: #2e7d32; }
+        .time-warning { background: #fff3e0; color: #ef6c00; }
+        .time-urgent { background: #ffebee; color: #c62828; }
+        .time-expired { background: #616161; color: white; }
+        
+        /* Collect Button */
+        .collect-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .collect-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: scale(1.02);
+        }
+        
+        .collect-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Urgent Alert */
+        .urgent-alert {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: bold;
+            animation: alertPulse 1.5s infinite;
+        }
+        
+        @keyframes alertPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.01); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            grid-column: 1 / -1;
+        }
+        
+        .empty-state h3 {
+            color: #666;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🤝 NGO Dashboard</h1>
+            <p>Welcome to SAVE2SERVE - Connecting NGOs with Food Donations</p>
+            <div class="nav-links">
+                <a href="#home">🏠 Home</a>
+                <a href="#refresh" onclick="location.reload()">🔄 Refresh</a>
+            </div>
+        </div>
+        
+        <!-- Urgent Alert (will be shown by JavaScript) -->
+        <div id="urgentAlert" class="urgent-alert" style="display: none;">
+            🚨 URGENT: <span id="urgentCount">0</span> food item(s) expiring soon!
+        </div>
+        
+        <!-- Food List (populated by JavaScript) -->
+        <div id="foodList">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <!-- Auto-refresh notice -->
+        <div style="text-align: center; margin-top: 40px; color: #666; font-size: 0.9rem;">
+            ⏰ Auto-refreshing in <span id="countdown">120</span> seconds
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT DATA - No Flask needed! -->
+    <script>
+        // SAMPLE DATA - You can modify this!
+        const foodData = [
+            {
+                id: 1,
+                hotel_name: "Taj Hotel",
+                food_name: "Vegetable Biryani",
+                quantity: "25 plates",
+                expiry_time: "2024-01-20 19:30:00",
+                location: "Connaught Place, Delhi",
+                status: "urgent",
+                time_left: "15 minutes"
+            },
+            {
+                id: 2,
+                hotel_name: "Marriott",
+                food_name: "Pizza & Pasta",
+                quantity: "30 servings",
+                expiry_time: "2024-01-20 20:15:00",
+                location: "Aerocity, Delhi",
+                status: "warning",
+                time_left: "45 minutes"
+            },
+            {
+                id: 3,
+                hotel_name: "Hyatt Regency",
+                food_name: "Sandwiches",
+                quantity: "50 pieces",
+                expiry_time: "2024-01-20 21:00:00",
+                location: "Dwarka, Delhi",
+                status: "normal",
+                time_left: "1h 30m"
+            },
+            {
+                id: 4,
+                hotel_name: "ITC Maurya",
+                food_name: "Rice & Curry",
+                quantity: "40 kg",
+                expiry_time: "2024-01-20 18:45:00",
+                location: "Chanakyapuri, Delhi",
+                status: "urgent",
+                time_left: "8 minutes"
+            }
+        ];
+        
+        // Function to render food cards
+        function renderFoods() {
+            const foodList = document.getElementById('foodList');
+            const urgentAlert = document.getElementById('urgentAlert');
+            const urgentCount = document.getElementById('urgentCount');
+            
+            let urgentItems = 0;
+            let html = '';
+            
+            if (foodData.length === 0) {
+                html = `
+                    <div class="empty-state">
+                        <h3>🍽️ No Food Available</h3>
+                        <p>There are currently no food donations available for collection.</p>
+                        <p>Hotels will post food here when they have surplus.</p>
+                    </div>
+                `;
+            } else {
+                html = '<h2 style="color: #2c3e50; margin-bottom: 20px;">🍽️ Available Food Donations</h2>';
+                html += '<div class="food-grid">';
+                
+                foodData.forEach(food => {
+                    // Count urgent items
+                    if (food.status === 'urgent') {
+                        urgentItems++;
+                    }
+                    
+                    // Determine time badge class
+                    let badgeClass = 'time-normal';
+                    if (food.status === 'expired') badgeClass = 'time-expired';
+                    else if (food.status === 'urgent') badgeClass = 'time-urgent';
+                    else if (food.status === 'warning') badgeClass = 'time-warning';
+                    
+                    html += `
+                        <div class="food-card ${food.status}">
+                            <h3>${food.food_name}</h3>
+                            <p><strong>🏨 Hotel:</strong> ${food.hotel_name}</p>
+                            <p><strong>📊 Quantity:</strong> ${food.quantity}</p>
+                            <p><strong>📍 Location:</strong> ${food.location}</p>
+                            <p><strong>📅 Expires:</strong> ${food.expiry_time}</p>
+                            
+                            <p><strong>⏰ Time Left:</strong></p>
+                            <div class="time-badge ${badgeClass}">
+                                ${food.status === 'expired' ? '⚠️ EXPIRED' : food.time_left}
+                            </div>
+                            
+                            <button class="collect-btn" onclick="collectFood(${food.id})" 
+                                ${food.status === 'expired' ? 'disabled' : ''}>
+                                🛒 COLLECT FOOD
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+            
+            foodList.innerHTML = html;
+            
+            // Show/hide urgent alert
+            if (urgentItems > 0) {
+                urgentAlert.style.display = 'block';
+                urgentCount.textContent = urgentItems;
+            } else {
+                urgentAlert.style.display = 'none';
+            }
+        }
+        
+        // Function to collect food
+        function collectFood(foodId) {
+            if (confirm(`Are you sure you want to collect Food #${foodId}?\n\nPlease arrange pickup with the hotel.`)) {
+                alert(`✅ Food #${foodId} marked as collected!\n\nYou will receive pickup details via email.`);
+                
+                // In a real app, you would send this to a server
+                // For demo, we'll just remove it from display
+                const index = foodData.findIndex(food => food.id === foodId);
+                if (index > -1) {
+                    foodData.splice(index, 1);
+                    renderFoods();
+                }
+            }
+        }
+        
+        // Auto-refresh countdown
+        let secondsLeft = 120;
+        function updateCountdown() {
+            document.getElementById('countdown').textContent = secondsLeft;
+            
+            if (secondsLeft <= 0) {
+                location.reload();
+            } else {
+                secondsLeft--;
+                setTimeout(updateCountdown, 1000);
+            }
+        }
+        
+        // Real-time countdown update (for demo)
+        function updateRealTimeCountdowns() {
+            // This would update countdowns in real-time
+            // For now, we'll just update every minute
+            setInterval(() => {
+                // In a real app, you would fetch new data from server
+                console.log("Checking for new food donations...");
+            }, 60000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFoods();
+            updateCountdown();
+            updateRealTimeCountdowns();
+            
+            // Auto-refresh every 2 minutes (120 seconds)
+            setTimeout(() => {
+                location.reload();
+            }, 120000);
+        });
+    </script>
+</body>
+</html>
