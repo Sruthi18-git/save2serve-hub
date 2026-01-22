@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from datetime import datetime, timedelta
 import database
 import auth
-from hotel import hotel
+from hotel import hotel_bp
 from ngo import ngo_bp
 from admin import admin_bp
 

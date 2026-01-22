@@ -351,26 +351,13 @@ class Database:
             return None
     
     def get_user_by_email(self, email, user_type):
-        """Get user by email based on user type with location data"""
+        """Get user by email based on user type"""
         try:
+            # Use simple queries that work with any schema version
             if user_type == 'hotel':
-                query = """
-                SELECT *, 
-                       CASE 
-                           WHEN latitude IS NOT NULL THEN '📍 Location set'
-                           ELSE '📍 Location not detected'
-                       END as location_status
-                FROM hotel WHERE email = ?
-                """
+                query = "SELECT * FROM hotel WHERE email = ?"
             elif user_type == 'ngo':
-                query = """
-                SELECT *, 
-                       CASE 
-                           WHEN latitude IS NOT NULL THEN '📍 Location set'
-                           ELSE '📍 Location not detected'
-                       END as location_status
-                FROM ngo WHERE email = ?
-                """
+                query = "SELECT * FROM ngo WHERE email = ?"
             elif user_type == 'admin':
                 query = "SELECT * FROM admin WHERE username = ?"
             else:
@@ -380,6 +367,8 @@ class Database:
             return result[0] if result and len(result) > 0 else None
         except Exception as e:
             print(f"❌ Error getting user: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def add_user(self, name, email, password, user_type, location="", contact=""):
